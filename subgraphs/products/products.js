@@ -25,6 +25,11 @@ const products = [
 ]
 const typeDefs = gql(readFileSync('./products.graphql', { encoding: 'utf-8' }));
 const resolvers = {
+    Mutation: {
+        setBoardBody: (_, args, context) => {
+            return { id: args.boardId, body: args.body }
+        }
+    },
     Query: {
         allProducts: (_, args, context) => {
             return products;
