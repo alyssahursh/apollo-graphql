@@ -20,14 +20,18 @@ const { readFileSync } = require('fs');
 const port = process.env.APOLLO_PORT || 4000;
 
 const users = [
-    { email: 'support@apollographql.com', name: "Apollo Studio Support", totalProductsCreated: 4 }
+    { id: 1 }
+]
+
+const accounts = [
+    { id: 1 }
 ]
 
 const typeDefs = gql(readFileSync('./users.graphql', { encoding: 'utf-8' }));
 const resolvers = {
     User: {
         __resolveReference: (reference) => {
-            return users.find(u => u.email == reference.email);
+            return users.find(u => u.id == reference.id);
         }
     }
 }

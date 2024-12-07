@@ -18,6 +18,13 @@ directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on IN
 
 directive @tag(name: String!) repeatable on FIELD_DEFINITION | INTERFACE | OBJECT | UNION
 
+type Account
+  @join__owner(graph: USERS)
+  @join__type(graph: USERS, key: "id")
+{
+  id: ID @join__field(graph: USERS)
+}
+
 type DeliveryEstimates {
   estimatedDelivery: String
   fastestDelivery: String
@@ -35,7 +42,6 @@ type Product
   @join__type(graph: PRODUCTS, key: "sku variation{id}")
   @join__type(graph: INVENTORY, key: "id")
 {
-  createdBy: User @join__field(graph: PRODUCTS, provides: "totalProductsCreated")
   delivery(zip: String): DeliveryEstimates @join__field(graph: INVENTORY, requires: "dimensions{size weight}")
   dimensions: ProductDimension @join__field(graph: PRODUCTS)
   id: ID! @join__field(graph: PRODUCTS) @tag(name: "hi-from-inventory") @tag(name: "hi-from-products")
@@ -56,18 +62,17 @@ type ProductVariation {
 type Query {
   allPandas: [Panda] @join__field(graph: PANDAS)
   allProducts: [Product] @join__field(graph: PRODUCTS)
+  me: User @join__field(graph: USERS)
   panda(name: ID!): Panda @join__field(graph: PANDAS)
   product(id: ID!): Product @join__field(graph: PRODUCTS)
 }
 
 type User
   @join__owner(graph: USERS)
-  @join__type(graph: USERS, key: "email")
-  @join__type(graph: PRODUCTS, key: "email")
+  @join__type(graph: USERS, key: "id")
 {
-  email: ID! @join__field(graph: USERS)
-  name: String @join__field(graph: USERS)
-  totalProductsCreated: Int @join__field(graph: USERS)
+  account: Account @join__field(graph: USERS)
+  id: ID! @join__field(graph: USERS)
 }
 
 enum core__Purpose {
@@ -90,3 +95,4 @@ enum join__Graph {
   PRODUCTS @join__graph(name: "products" url: "http://products:4000/graphql")
   USERS @join__graph(name: "users" url: "http://users:4000/graphql")
 }
+

@@ -1,5 +1,12 @@
-type User @key(fields:"email") {
-    email:ID!
-    name: String
-    totalProductsCreated: Int
+extend type Query {
+	me: User
+}
+
+type User @key(fields: "id") {
+	id: ID!
+	account: Account
+}
+
+type Account @key(fields: "id") {
+	id: ID
 }

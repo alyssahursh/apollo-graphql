@@ -6,8 +6,6 @@ type Product @key(fields: "id") @key(fields: "sku package") @key(fields: "sku va
   package: String
   variation: ProductVariation
   dimensions: ProductDimension
-
-  createdBy: User @provides(fields: "totalProductsCreated")
 }
 
 type ProductVariation {
@@ -22,9 +20,4 @@ type ProductDimension {
 extend type Query {
   allProducts: [Product]
   product(id: ID!): Product
-}
-
-extend type User @key(fields: "email") {
-  email: ID! @external
-  totalProductsCreated: Int @external
 }

@@ -67,10 +67,6 @@ query allProdDelivery {
     delivery {
       estimatedDelivery,
       fastestDelivery
-    },
-    createdBy {
-      name,
-      email
     }
   }
 }
@@ -79,7 +75,7 @@ EOF
 OP_1=equals
 
 read -r -d '' EXP_1 <<"EOF"
-{"data":{"allProducts":[{"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"},"createdBy":{"name":"Apollo Studio Support","email":"support@apollographql.com"}},{"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"},"createdBy":{"name":"Apollo Studio Support","email":"support@apollographql.com"}}]}}
+{"data":{"allProducts":[{"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"}},{"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"}}]}}
 EOF
 
 # --------------------------------------------------------------------
@@ -92,11 +88,7 @@ read -r -d '' QUERY_2 <<"EOF"
 query allProdCreated {
   allProducts {
     id,
-    sku,
-    createdBy {
-      email,
-      totalProductsCreated
-    }
+    sku
   }
 }
 EOF
@@ -104,7 +96,7 @@ EOF
 OP_2=equals
 
 read -r -d '' EXP_2 <<"EOF"
-{"data":{"allProducts":[{"id":"apollo-federation","sku":"federation","createdBy":{"email":"support@apollographql.com","totalProductsCreated":1337}},{"id":"apollo-studio","sku":"studio","createdBy":{"email":"support@apollographql.com","totalProductsCreated":1337}}]}}
+{"data":{"allProducts":[{"id":"apollo-federation","sku":"federation"},{"id":"apollo-studio","sku":"studio"}]}}
 EOF
 
 # --------------------------------------------------------------------

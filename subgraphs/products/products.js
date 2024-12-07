@@ -41,9 +41,6 @@ const resolvers = {
         dimensions: () => {
             return { size: "1", weight: 1 }
         },
-        createdBy: (reference) => {
-            return { email: 'support@apollographql.com', totalProductsCreated: 1337 }
-        },
         __resolveReference: (reference) => {
             if (reference.id) return products.find(p => p.id == reference.id);
             else if (reference.sku && reference.package) return products.find(p => p.sku == reference.sku && p.package == reference.package);
