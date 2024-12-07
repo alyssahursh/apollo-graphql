@@ -64,10 +64,7 @@ ACCEPT_1="application/json"
 read -r -d '' QUERY_1 <<"EOF"
 query allProdDelivery {
   allProducts {
-    delivery {
-      estimatedDelivery,
-      fastestDelivery
-    }
+    id
   }
 }
 EOF
@@ -75,7 +72,7 @@ EOF
 OP_1=equals
 
 read -r -d '' EXP_1 <<"EOF"
-{"data":{"allProducts":[{"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"}},{"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"}}]}}
+{"data":{"allProducts":[{"id":"apollo-federation"},{"id":"apollo-studio"}]}}
 EOF
 
 # --------------------------------------------------------------------
@@ -100,34 +97,9 @@ read -r -d '' EXP_2 <<"EOF"
 EOF
 
 # --------------------------------------------------------------------
-# TEST 3 - @inaccessible in subgraphs - disabled for Fed 1
-# --------------------------------------------------------------------
-DESCR_3="hidden: String @inaccessible should return error"
-OPNAME_3="inaccessibleError"
-ACCEPT_3="application/json"
-read -r -d '' QUERY_3 <<"EOF"
-query inaccessibleError {
-  allProducts {
-    id,
-    hidden,
-    dimensions {
-      size,
-      weight
-    }
-  }
-}
-EOF
-
-OP_3=contains
-
-read -r -d '' EXP_3 <<"EOF"
-Cannot query field \"hidden\" on type \"ProductItf\".
-EOF
-
-# --------------------------------------------------------------------
 # TEST 4
 # --------------------------------------------------------------------
-DESCR_4="exampleQuery without pandas because I deleted them"
+DESCR_4="exampleQuery without pandas or delivery because I deleted them"
 OPNAME_4="exampleQuery"
 ACCEPT_4="application/json"
 read -r -d '' QUERY_4 <<"EOF"
@@ -139,10 +111,6 @@ query exampleQuery {
      size,
      weight
    }
-   delivery {
-     estimatedDelivery,
-     fastestDelivery
-   }
  }
 }
 EOF
@@ -150,7 +118,7 @@ EOF
 OP_4=equals
 
 read -r -d '' EXP_4 <<"EOF"
-{"data":{"allProducts":[{"id":"apollo-federation","sku":"federation","dimensions":{"size":"1","weight":1},"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"}},{"id":"apollo-studio","sku":"studio","dimensions":{"size":"1","weight":1},"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"}}]}}
+{"data":{"allProducts":[{"id":"apollo-federation","sku":"federation","dimensions":{"size":"1","weight":1}},{"id":"apollo-studio","sku":"studio","dimensions":{"size":"1","weight":1}}]}}
 EOF
 
 # --------------------------------------------------------------------

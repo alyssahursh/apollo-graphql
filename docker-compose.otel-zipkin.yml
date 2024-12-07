@@ -19,12 +19,6 @@ services:
     environment:
       - APOLLO_OTEL_EXPORTER_TYPE=zipkin
       - APOLLO_OTEL_EXPORTER_HOST=zipkin
-  inventory:
-    container_name: inventory
-    build: ./subgraphs/inventory
-    environment:
-      - APOLLO_OTEL_EXPORTER_TYPE=zipkin
-      - APOLLO_OTEL_EXPORTER_HOST=zipkin
   users:
     container_name: users
     build: ./subgraphs/users

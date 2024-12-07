@@ -25,21 +25,14 @@ type Account
   id: ID @join__field(graph: USERS)
 }
 
-type DeliveryEstimates {
-  estimatedDelivery: String
-  fastestDelivery: String
-}
-
 type Product
   @join__owner(graph: PRODUCTS)
   @join__type(graph: PRODUCTS, key: "id")
   @join__type(graph: PRODUCTS, key: "sku package")
   @join__type(graph: PRODUCTS, key: "sku variation{id}")
-  @join__type(graph: INVENTORY, key: "id")
 {
-  delivery(zip: String): DeliveryEstimates @join__field(graph: INVENTORY, requires: "dimensions{size weight}")
   dimensions: ProductDimension @join__field(graph: PRODUCTS)
-  id: ID! @join__field(graph: PRODUCTS) @tag(name: "hi-from-inventory") @tag(name: "hi-from-products")
+  id: ID! @join__field(graph: PRODUCTS) @tag(name: "hi-from-products")
   package: String @join__field(graph: PRODUCTS)
   sku: String @join__field(graph: PRODUCTS) @tag(name: "hi-from-products")
   variation: ProductVariation @join__field(graph: PRODUCTS)
@@ -47,7 +40,7 @@ type Product
 
 type ProductDimension {
   size: String
-  weight: Float @tag(name: "hi-from-inventory-value-type-field")
+  weight: Float
 }
 
 type ProductVariation {
@@ -83,7 +76,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  INVENTORY @join__graph(name: "inventory" url: "http://inventory:4000/graphql")
   PRODUCTS @join__graph(name: "products" url: "http://products:4000/graphql")
   USERS @join__graph(name: "users" url: "http://users:4000/graphql")
 }
