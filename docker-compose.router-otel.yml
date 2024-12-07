@@ -36,11 +36,6 @@ services:
       - APOLLO_OTEL_EXPORTER_PORT=4318
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
-  pandas:
-    container_name: pandas
-    build: ./subgraphs/pandas
-    volumes:
-      - "/etc/localtime:/etc/localtime:ro"
   collector:
     container_name: collector
     image: otel/opentelemetry-collector:0.115.1

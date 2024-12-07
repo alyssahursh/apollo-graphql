@@ -127,7 +127,7 @@ EOF
 # --------------------------------------------------------------------
 # TEST 4
 # --------------------------------------------------------------------
-DESCR_4="exampleQuery with pandas"
+DESCR_4="exampleQuery without pandas because I deleted them"
 OPNAME_4="exampleQuery"
 ACCEPT_4="application/json"
 read -r -d '' QUERY_4 <<"EOF"
@@ -144,17 +144,13 @@ query exampleQuery {
      fastestDelivery
    }
  }
- allPandas {
-   name,
-   favoriteFood
- }
 }
 EOF
 
 OP_4=equals
 
 read -r -d '' EXP_4 <<"EOF"
-{"data":{"allProducts":[{"id":"apollo-federation","sku":"federation","dimensions":{"size":"1","weight":1},"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"}},{"id":"apollo-studio","sku":"studio","dimensions":{"size":"1","weight":1},"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"}}],"allPandas":[{"name":"Basi","favoriteFood":"bamboo leaves"},{"name":"Yun","favoriteFood":"apple"}]}}
+{"data":{"allProducts":[{"id":"apollo-federation","sku":"federation","dimensions":{"size":"1","weight":1},"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"}},{"id":"apollo-studio","sku":"studio","dimensions":{"size":"1","weight":1},"delivery":{"estimatedDelivery":"6/25/2021","fastestDelivery":"6/24/2021"}}]}}
 EOF
 
 # --------------------------------------------------------------------

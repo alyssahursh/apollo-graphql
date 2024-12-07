@@ -31,9 +31,6 @@ services:
     environment:
       - APOLLO_OTEL_EXPORTER_TYPE=zipkin
       - APOLLO_OTEL_EXPORTER_HOST=zipkin
-  pandas:
-    container_name: pandas
-    build: ./subgraphs/pandas
   zipkin:
     container_name: zipkin
     image: openzipkin/zipkin:3.4.3
