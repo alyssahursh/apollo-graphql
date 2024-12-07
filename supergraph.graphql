@@ -1,9 +1,9 @@
 schema
   @core(feature: "https://specs.apollo.dev/core/v0.2"),
-  @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION),
-  @core(feature: "https://specs.apollo.dev/tag/v0.1")
+  @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
 {
   query: Query
+  mutation: Mutation
 }
 
 directive @core(as: String, feature: String!, for: core__Purpose) repeatable on SCHEMA
@@ -16,48 +16,43 @@ directive @join__owner(graph: join__Graph!) on INTERFACE | OBJECT
 
 directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on INTERFACE | OBJECT
 
-directive @tag(name: String!) repeatable on FIELD_DEFINITION | INTERFACE | OBJECT | UNION
-
 type Account
   @join__owner(graph: USERS)
   @join__type(graph: USERS, key: "id")
+  @join__type(graph: PRODUCTS, key: "id")
 {
+  boards: [Board] @join__field(graph: PRODUCTS)
   id: ID @join__field(graph: USERS)
 }
 
-type Product
-  @join__owner(graph: PRODUCTS)
-  @join__type(graph: PRODUCTS, key: "id")
-  @join__type(graph: PRODUCTS, key: "sku package")
-  @join__type(graph: PRODUCTS, key: "sku variation{id}")
-{
-  dimensions: ProductDimension @join__field(graph: PRODUCTS)
-  id: ID! @join__field(graph: PRODUCTS) @tag(name: "hi-from-products")
-  package: String @join__field(graph: PRODUCTS)
-  sku: String @join__field(graph: PRODUCTS) @tag(name: "hi-from-products")
-  variation: ProductVariation @join__field(graph: PRODUCTS)
+type Board {
+  body: String
+  id: ID
 }
 
-type ProductDimension {
-  size: String
-  weight: Float
+enum BoardMutationErrors {
+  DEADLOCK
+  INVALID_PERMISSION
+  INVALID_STATE
+  STALE_BOARD
+  UNKNOWN_BOARD
 }
 
-type ProductVariation {
-  id: ID!
+type Mutation {
+  setBoardBody(boardId: ID, body: String): Board @join__field(graph: PRODUCTS)
 }
 
 type Query {
-  allProducts: [Product] @join__field(graph: PRODUCTS)
   me: User @join__field(graph: USERS)
-  product(id: ID!): Product @join__field(graph: PRODUCTS)
 }
 
 type User
   @join__owner(graph: USERS)
   @join__type(graph: USERS, key: "id")
+  @join__type(graph: PRODUCTS, key: "id")
 {
   account: Account @join__field(graph: USERS)
+  boards: [Board] @join__field(graph: PRODUCTS)
   id: ID! @join__field(graph: USERS)
 }
 

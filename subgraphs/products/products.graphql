@@ -1,23 +1,26 @@
-directive @tag(name: String!) repeatable on FIELD_DEFINITION
-
-type Product @key(fields: "id") @key(fields: "sku package") @key(fields: "sku variation { id }"){
-  id: ID! @tag(name: "hi-from-products")
-  sku: String @tag(name: "hi-from-products")
-  package: String
-  variation: ProductVariation
-  dimensions: ProductDimension
+type Mutation {
+	setBoardBody(boardId: ID, body: String): Board
 }
 
-type ProductVariation {
-  id: ID!
+enum BoardMutationErrors {
+	DEADLOCK
+	STALE_BOARD
+	INVALID_STATE
+	INVALID_PERMISSION
+	UNKNOWN_BOARD
 }
 
-type ProductDimension {
-  size: String
-  weight: Float
+type Board {
+	id: ID
+	body: String
 }
 
-extend type Query {
-  allProducts: [Product]
-  product(id: ID!): Product
+extend type User @key(fields: "id") {
+	id: ID! @external
+	boards: [Board]
+}
+
+extend type Account @key(fields: "id") {
+	id: ID @external
+	boards: [Board]
 }

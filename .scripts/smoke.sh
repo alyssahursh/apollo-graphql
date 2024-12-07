@@ -33,7 +33,7 @@ exec_curl() {
   return $EXIT_CODE
 }
 
-TESTS=(1 2 4)
+TESTS=(1 2)
 DEFER_TESTS=(5 6)
 
 HAS_DEFER=0
@@ -58,13 +58,16 @@ printf "\n"
 # --------------------------------------------------------------------
 # TEST 1
 # --------------------------------------------------------------------
-DESCR_1="allProducts with delivery"
-OPNAME_1="allProdDelivery"
+DESCR_1="Query me with account"
+OPNAME_1="usersTestWithAccount"
 ACCEPT_1="application/json"
 read -r -d '' QUERY_1 <<"EOF"
-query allProdDelivery {
-  allProducts {
+query usersTestWithAccount {
+  me {
     id
+    account {
+      id
+    }
   }
 }
 EOF
@@ -72,20 +75,19 @@ EOF
 OP_1=equals
 
 read -r -d '' EXP_1 <<"EOF"
-{"data":{"allProducts":[{"id":"apollo-federation"},{"id":"apollo-studio"}]}}
+{"data":{"me":{"id":"1","account":{"id":"1"}}}}
 EOF
 
 # --------------------------------------------------------------------
 # TEST 2
 # --------------------------------------------------------------------
-DESCR_2="allProducts with totalProductsCreated"
-OPNAME_2="allProdCreated"
+DESCR_2="Query me"
+OPNAME_2="usersTest"
 ACCEPT_2="application/json"
 read -r -d '' QUERY_2 <<"EOF"
-query allProdCreated {
-  allProducts {
-    id,
-    sku
+query usersTest {
+  me {
+    id
   }
 }
 EOF
@@ -93,67 +95,7 @@ EOF
 OP_2=equals
 
 read -r -d '' EXP_2 <<"EOF"
-{"data":{"allProducts":[{"id":"apollo-federation","sku":"federation"},{"id":"apollo-studio","sku":"studio"}]}}
-EOF
-
-# --------------------------------------------------------------------
-# TEST 4
-# --------------------------------------------------------------------
-DESCR_4="exampleQuery without pandas or delivery because I deleted them"
-OPNAME_4="exampleQuery"
-ACCEPT_4="application/json"
-read -r -d '' QUERY_4 <<"EOF"
-query exampleQuery {
- allProducts {
-   id,
-   sku,
-   dimensions {
-     size,
-     weight
-   }
- }
-}
-EOF
-
-OP_4=equals
-
-read -r -d '' EXP_4 <<"EOF"
-{"data":{"allProducts":[{"id":"apollo-federation","sku":"federation","dimensions":{"size":"1","weight":1}},{"id":"apollo-studio","sku":"studio","dimensions":{"size":"1","weight":1}}]}}
-EOF
-
-# --------------------------------------------------------------------
-# TEST 5
-# --------------------------------------------------------------------
-DESCR_5="defer variation query"
-OPNAME_5="deferVariation"
-ACCEPT_5="multipart/mixed; deferSpec=20220824, application/json"
-read -r -d '' QUERY_5 <<"EOF"
-query deferVariation {
-  allProducts {
-    variation {
-      ...MyFragment @defer
-    },
-    sku,
-    id
-  }
-}
-fragment MyFragment on ProductVariation {
-  id
-}
-EOF
-OP_5=equals
-
-IFS= read -r -d '' EXP_5 <<"EOF"
-
---graphql
-content-type: application/json
-
-{"data":{"allProducts":[{"sku":"federation","id":"apollo-federation"},{"sku":"studio","id":"apollo-studio"}]},"hasNext":true}
---graphql
-content-type: application/json
-
-{"hasNext":false,"incremental":[{"data":{"id":"OSS"},"path":["allProducts",0,"variation"]},{"data":{"id":"platform"},"path":["allProducts",1,"variation"]}]}
---graphql--
+{"data":{"me":{"id":"1"}}}
 EOF
 
 # --------------------------------------------------------------------

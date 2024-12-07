@@ -19,19 +19,11 @@ const { readFileSync } = require('fs');
 
 const port = process.env.APOLLO_PORT || 4000;
 
-const users = [
-    { id: 1 }
-]
-
-const accounts = [
-    { id: 1 }
-]
-
 const typeDefs = gql(readFileSync('./users.graphql', { encoding: 'utf-8' }));
 const resolvers = {
-    User: {
-        __resolveReference: (reference) => {
-            return users.find(u => u.id == reference.id);
+    Query: {
+      me: () => {
+            return { id: 1, account: { id: 1 } };
         }
     }
 }
