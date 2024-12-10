@@ -23,6 +23,17 @@ const products = [
     { id: 'apollo-federation', sku: 'federation', package: '@apollo/federation', variation: "OSS" },
     { id: 'apollo-studio', sku: 'studio', package: '', variation: "platform" },
 ]
+
+const boards = {
+    "a4a72132-5e9e-48fd-ade6-dc4707c19b41": [
+        { id: "92fe69ee-f018-49e9-a603-3f414b41c4cb", body: "First board belonging to user a4a72132" },
+        { id: "ddcc1d68-2a87-48bd-b824-5d6c702d6abf", body: "Second board belonging to user a4a72132" },
+    ],
+    "c6f2f5ac-49ad-479e-b601-1756b2fa8e35": [
+        { id: "28035b84-2337-458d-8884-b3050eb6a7e6", body: "First board belonging to user c6f2f5ac" },
+        { id: " 5e86bf6a-373c-4db4-b1ee-8a7cd3e9bf2d ", body: "Second board belonging to user c6f2f5ac" },
+    ],
+}
 const typeDefs = gql(readFileSync('./products.graphql', { encoding: 'utf-8' }));
 const resolvers = {
     Mutation: {
@@ -37,6 +48,11 @@ const resolvers = {
         product: (_, args, context) => {
             return products.find(p => p.id == args.id);
         }
+    },
+    User: {
+        boards: (reference) => {
+            return boards[reference.id];
+          },
     },
     Product: {
         variation: (reference) => {
