@@ -9,9 +9,6 @@ services:
     command: [ "--dev", "-c", "config/router.yaml", "-s", "schema/supergraph.graphql", "--log", "info" ]
     ports:
       - "4000:4000"
-  products:
-    container_name: products
-    build: ./subgraphs/products
   users:
     container_name: users
     build: ./subgraphs/users

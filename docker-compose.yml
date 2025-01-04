@@ -9,9 +9,6 @@ services:
       - ./supergraph.graphql:/etc/config/supergraph.graphql
     ports:
       - "4000:4000"
-  products:
-    container_name: products
-    build: ./subgraphs/products
   users:
     container_name: users
     build: ./subgraphs/users

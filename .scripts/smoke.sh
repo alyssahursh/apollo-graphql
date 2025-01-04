@@ -58,16 +58,13 @@ printf "\n"
 # --------------------------------------------------------------------
 # TEST 1
 # --------------------------------------------------------------------
-DESCR_1="Query me with account"
-OPNAME_1="usersTestWithAccount"
+DESCR_1="Query me"
+OPNAME_1="usersTest1"
 ACCEPT_1="application/json"
 read -r -d '' QUERY_1 <<"EOF"
-query usersTestWithAccount {
+query usersTest1 {
   me {
     id
-    account {
-      id
-    }
   }
 }
 EOF
@@ -75,17 +72,17 @@ EOF
 OP_1=equals
 
 read -r -d '' EXP_1 <<"EOF"
-{"data":{"me":{"id":"a4a72132-5e9e-48fd-ade6-dc4707c19b41","account":{"id":"630f339f-0265-47f9-8902-9a238b24c7a9"}}}}
+{"data":{"me":{"id":"a4a72132-5e9e-48fd-ade6-dc4707c19b41"}}}
 EOF
 
 # --------------------------------------------------------------------
 # TEST 2
 # --------------------------------------------------------------------
 DESCR_2="Query me"
-OPNAME_2="usersTest"
+OPNAME_2="usersTest2"
 ACCEPT_2="application/json"
 read -r -d '' QUERY_2 <<"EOF"
-query usersTest {
+query usersTest2 {
   me {
     id
   }

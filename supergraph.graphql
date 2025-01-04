@@ -3,7 +3,6 @@ schema
   @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
 {
   query: Query
-  mutation: Mutation
 }
 
 directive @core(as: String, feature: String!, for: core__Purpose) repeatable on SCHEMA
@@ -16,32 +15,6 @@ directive @join__owner(graph: join__Graph!) on INTERFACE | OBJECT
 
 directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on INTERFACE | OBJECT
 
-type Account
-  @join__owner(graph: USERS)
-  @join__type(graph: USERS, key: "id")
-  @join__type(graph: PRODUCTS, key: "id")
-{
-  boards: [Board] @join__field(graph: PRODUCTS)
-  id: ID @join__field(graph: USERS)
-}
-
-type Board {
-  body: String
-  id: ID
-}
-
-enum BoardMutationErrors {
-  DEADLOCK
-  INVALID_PERMISSION
-  INVALID_STATE
-  STALE_BOARD
-  UNKNOWN_BOARD
-}
-
-type Mutation {
-  setBoardBody(boardId: ID, body: String): Board @join__field(graph: PRODUCTS)
-}
-
 type Query {
   me: User @join__field(graph: USERS)
 }
@@ -49,10 +22,7 @@ type Query {
 type User
   @join__owner(graph: USERS)
   @join__type(graph: USERS, key: "id")
-  @join__type(graph: PRODUCTS, key: "id")
 {
-  account: Account @join__field(graph: USERS)
-  boards: [Board] @join__field(graph: PRODUCTS)
   id: ID! @join__field(graph: USERS)
 }
 
@@ -71,7 +41,6 @@ enum core__Purpose {
 scalar join__FieldSet
 
 enum join__Graph {
-  PRODUCTS @join__graph(name: "products" url: "http://products:4000/graphql")
   USERS @join__graph(name: "users" url: "http://users:4000/graphql")
 }
 
