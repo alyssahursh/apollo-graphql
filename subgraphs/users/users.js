@@ -23,7 +23,18 @@ const typeDefs = gql(readFileSync('./users.graphql', { encoding: 'utf-8' }));
 const resolvers = {
     Query: {
       me: () => {
-            return { id: "a4a72132-5e9e-48fd-ade6-dc4707c19b41", account: { id: "630f339f-0265-47f9-8902-9a238b24c7a9" } };
+            return { 
+              id: "a4a72132-5e9e-48fd-ade6-dc4707c19b41", 
+              name: 'Alyssa',
+              city: 'Portland',
+              country: 'United States',
+              countryCode: 'USA',
+              timezone: 'UTC-8',
+              team: {
+                ID: '1',
+                name: 'Team 1'
+              }
+            };
         }
     }
 }

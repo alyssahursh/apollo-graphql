@@ -16,14 +16,27 @@ directive @join__owner(graph: join__Graph!) on INTERFACE | OBJECT
 directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on INTERFACE | OBJECT
 
 type Query {
-  me: User @join__field(graph: USERS)
+  hello: String! @join__field(graph: USERS)
+  me: User! @join__field(graph: USERS)
+  teams: [Team] @join__field(graph: USERS)
+}
+
+type Team {
+  id: ID!
+  name: String!
 }
 
 type User
   @join__owner(graph: USERS)
   @join__type(graph: USERS, key: "id")
 {
+  city: String! @join__field(graph: USERS)
+  country: String! @join__field(graph: USERS)
+  countryCode: String! @join__field(graph: USERS)
   id: ID! @join__field(graph: USERS)
+  name: String! @join__field(graph: USERS)
+  team: Team! @join__field(graph: USERS)
+  timezone: String! @join__field(graph: USERS)
 }
 
 enum core__Purpose {

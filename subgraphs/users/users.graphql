@@ -1,7 +1,30 @@
+# Ideally, teams would be a non-nullable list of non-null Teams: [Team!]!
+# https://www.apollographql.com/blog/using-nullability-in-graphql
 extend type Query {
-	me: User
+	hello: String!
+	me: User!
+	teams: [Team]
 }
 
+# User type does not have key field defined in study screenshot; is this an oversight?
+# `make demo` failed without key with this erorr:
+#     curl -X POST http://localhost:4000/ -H Content-Type: application/json --data { "query": "query { __schema { directives { name }}}" }
+#     ERROR: CURL ERROR 52: Empty reply from server.
+#     make: *** [Makefile:65: smoke] Error 1
+# https://www.apollographql.com/docs/graphos/schema-design/federated-schemas/entities/intro
+# Key field syntax: @key(fields: "id")
+# Team ID is foreign key from Team table
 type User @key(fields: "id") {
 	id: ID!
+	name: String!
+	city: String!
+	country: String!
+	countryCode: String!
+	timezone: String!
+	team: Team!
+}
+
+type Team {
+	id: ID!
+	name: String!
 }
