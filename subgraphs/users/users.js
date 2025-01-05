@@ -57,18 +57,10 @@ const resolvers = {
                 } else if (!teamRow) {
                   reject(new Error('Team not found'));
                 } else {
-                  // Transform the raw row into the expected User structure
-                  const user = {
-                    id: userRow.id,
-                    name: userRow.name,
-                    city: userRow.city,
-                    country: userRow.country,
-                    countryCode: userRow.countryCode,
-                    timezone: userRow.timezone,
-                    team: teamRow, // Attach the team object
-                  };
-                  console.log(user);
-                  resolve(user);
+                  resolve({
+                    ...userRow,
+                    team: teamRow
+                  });
                 }
               });
             }
