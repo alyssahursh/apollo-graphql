@@ -18,7 +18,7 @@ directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on IN
 type Query {
   hello: String! @join__field(graph: USERS)
   me: User! @join__field(graph: USERS)
-  teams(limit: Int, offset: Int): [Team] @join__field(graph: USERS)
+  teams(after: ID, limit: Int): [Team] @join__field(graph: USERS)
 }
 
 type Team {
