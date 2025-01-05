@@ -3,7 +3,7 @@
 extend type Query {
 	hello: String!
 	me: User!
-	teams: [Team]
+	teams(limit: Int, offset: Int): [Team]
 }
 
 # User type does not have key field defined in study screenshot; is this an oversight?

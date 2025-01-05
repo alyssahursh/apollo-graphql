@@ -24,9 +24,9 @@ const port = process.env.APOLLO_PORT || 4000;
 const typeDefs = gql(readFileSync('./users.graphql', { encoding: 'utf-8' }));
 const resolvers = {
     Query: {
-      teams: () => {
+      teams: (_, {limit = 100000, offset = 0}) => {
         return new Promise((resolve, reject) => {
-          db.all('SELECT * From Teams', (err, teams) => {
+          db.all('SELECT * From Teams LIMIT ? OFFSET ?', [limit, offset], (err, teams) => {
             if (err) {
               reject(err)
             } else {
