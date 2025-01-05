@@ -24,6 +24,17 @@ const port = process.env.APOLLO_PORT || 4000;
 const typeDefs = gql(readFileSync('./users.graphql', { encoding: 'utf-8' }));
 const resolvers = {
     Query: {
+      teams: () => {
+        return new Promise((resolve, reject) => {
+          db.all('SELECT * From Teams', (err, teams) => {
+            if (err) {
+              reject(err)
+            } else {
+              resolve(teams);
+            }
+          })
+        });
+      },
       me: () => {
         return new Promise((resolve, reject) => {
           console.log('Attempting to select data from database');
