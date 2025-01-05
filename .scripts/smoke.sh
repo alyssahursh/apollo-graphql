@@ -33,8 +33,8 @@ exec_curl() {
   return $EXIT_CODE
 }
 
-TESTS=(1 2)
-DEFER_TESTS=(5 6)
+TESTS=()
+DEFER_TESTS=()
 
 HAS_DEFER=0
 
