@@ -26,7 +26,7 @@ const resolvers = {
     Query: {
       teams: (_, {limit = 100000, offset = 0}) => {
         return new Promise((resolve, reject) => {
-          db.all('SELECT * From Teams LIMIT ? OFFSET ?', [limit, offset], (err, teams) => {
+          db.all('SELECT * From Teams ORDER BY id LIMIT ? OFFSET ?', [limit, offset], (err, teams) => {
             if (err) {
               reject(err)
             } else {
