@@ -58,9 +58,6 @@ jobs:
       - name: unpublish
         run: |
           make unpublish || true
-      - name: publish
-        run: |
-          make publish
       - name: docker-compose build
         run: |
           ( set -x; docker-compose build --no-cache --pull --parallel --progress plain )
