@@ -12,3 +12,5 @@ services:
   users:
     container_name: users
     build: ./subgraphs/users
+    ports:
+      - "4001:4000"  # Exposing port 4000 from the users service on port 4001

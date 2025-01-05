@@ -1,3 +1,5 @@
+const db = require('./setupDb.js');
+
 // Open Telemetry (optional)
 const { ApolloOpenTelemetry } = require('supergraph-demo-opentelemetry');
 
@@ -23,19 +25,39 @@ const typeDefs = gql(readFileSync('./users.graphql', { encoding: 'utf-8' }));
 const resolvers = {
     Query: {
       me: () => {
-            return { 
-              id: "a4a72132-5e9e-48fd-ade6-dc4707c19b41", 
-              name: 'Alyssa',
-              city: 'Portland',
-              country: 'United States',
-              countryCode: 'USA',
-              timezone: 'UTC-8',
-              team: {
-                ID: '1',
-                name: 'Team 1'
-              }
-            };
-        }
+        return new Promise((resolve, reject) => {
+          console.log('Attempting to select data from database');
+          db.get('SELECT * FROM Users WHERE id = ?', [1], (err, userRow) => {
+            if (err) {
+              reject(err);
+            } else if (!userRow) {
+              reject(new Error('User not found'));
+            } else {
+              console.log(userRow);
+              db.get('SELECT * FROM Teams WHERE id = ?', [userRow.teamId], (err, teamRow) => {
+                if (err) {
+                  reject(err);
+                } else if (!teamRow) {
+                  reject(new Error('Team not found'));
+                } else {
+                  // Transform the raw row into the expected User structure
+                  const user = {
+                    id: userRow.id,
+                    name: userRow.name,
+                    city: userRow.city,
+                    country: userRow.country,
+                    countryCode: userRow.countryCode,
+                    timezone: userRow.timezone,
+                    team: teamRow, // Attach the team object
+                  };
+                  console.log(user);
+                  resolve(user);
+                }
+              });
+            }
+          });
+        });
+      }      
     }
 }
 const server = new ApolloServer({ schema: buildSubgraphSchema({ typeDefs, resolvers }) });

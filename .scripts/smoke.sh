@@ -65,6 +65,7 @@ read -r -d '' QUERY_1 <<"EOF"
 query usersTest1 {
   me {
     id
+    name
   }
 }
 EOF

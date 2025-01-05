@@ -7,6 +7,7 @@ COPY package.json .
 RUN npm install
 
 COPY users.js .
+COPY setupDb.js .
 COPY users.graphql .
 
 CMD [ "node", "users.js" ]
