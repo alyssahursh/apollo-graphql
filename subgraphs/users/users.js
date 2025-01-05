@@ -35,7 +35,7 @@ const resolvers = {
           })
         });
       },
-      me: () => {
+      me: (parent, args, contextValue, info) => {
         return new Promise((resolve, reject) => {
           console.log('Attempting to select data from database');
           db.get('SELECT * FROM Users WHERE id = ?', [1], (err, userRow) => {
@@ -44,7 +44,13 @@ const resolvers = {
             } else if (!userRow) {
               reject(new Error('User not found'));
             } else {
-              console.log(userRow);
+              const teamRequested = info.fieldNodes.some((field) => 
+                field.selectionSet.selections.some((sel) => sel.name.value === 'team')
+              );
+              if (!teamRequested) {
+                resolve(userRow);
+              }
+
               db.get('SELECT * FROM Teams WHERE id = ?', [userRow.teamId], (err, teamRow) => {
                 if (err) {
                   reject(err);
