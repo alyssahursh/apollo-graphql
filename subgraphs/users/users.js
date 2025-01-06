@@ -35,42 +35,54 @@ const resolvers = {
           })
         });
       },
-      me: (parent, args, contextValue, info) => {
-        console.log(args);
+      me: (_, args) => {
+        console.log(`User query args: ${JSON.stringify(args)}`);
         return new Promise((resolve, reject) => {
-          console.log(`Attempting to select data for user ID ${args.id} from database`);
+          console.log(`Attempting to select data for userId: ${args.id} from user table`);
           db.get('SELECT * FROM Users WHERE id = ?', [args.id], (err, userRow) => {
             if (err) {
               reject(err);
             } else if (!userRow) {
               reject(new Error('User not found'));
             } else {
-              const teamRequested = info.fieldNodes.some((field) => 
-                field.selectionSet.selections.some((sel) => sel.name.value === 'team')
-              );
-              const teamsRequested = info.fieldNodes.some((field) => 
-                field.selectionSet.selections.some((sel) => sel.name.value === 'teams')
-              );
-              if (!teamRequested && !teamsRequested) {
-                resolve(userRow);
-              }
-              db.get('SELECT * FROM Teams WHERE id = ?', [userRow.teamId], (err, teamRow) => {
-                if (err) {
-                  reject(err);
-                } else if (!teamRow) {
-                  reject(new Error('Team not found'));
-                } else {
-                  resolve({
-                    ...userRow,
-                    team: teamRow,
-                    teams: [teamRow]
-                  });
-                }
-              });
+              console.log(`Retrieved data from user table: ${JSON.stringify(userRow)}`);
+              resolve(userRow);
             }
           });
         });
       }      
+    },
+    User: {
+      team: (parent) => {
+        console.log(`Team field query parent: ${JSON.stringify(parent)}`);
+        return new Promise((resolve, reject) => {
+            db.get('SELECT * FROM Teams WHERE id = ?', [parent.teamId], (err, team) => {
+              if (err) {
+                reject(err);
+              } else if (!team) {
+                reject(new Error(`No team found in teams table for teamId: ${parent.teamId}`));
+              } else {
+                console.log(`Retrieved team: ${JSON.stringify(team)} from team table`);
+                resolve(team);
+              }
+            });
+          })
+      },
+      teams: (parent) => {
+        console.log(`Teams field query parent: ${JSON.stringify(parent)}`);
+        return new Promise((resolve, reject) => {
+          db.get('SELECT * FROM Teams WHERE id = ?', [parent.teamId], (err, team) => {
+            if (err) {
+              reject(err);
+            } else if (!team) {
+              reject(new Error(`No team found in teams table for teamId: ${parent.teamId}`));
+            } else {
+              console.log(`Retrieved team: ${JSON.stringify(team)} from team table`);
+              resolve([team]);
+            }
+          });
+        })
+      }
     }
 }
 const server = new ApolloServer({ schema: buildSubgraphSchema({ typeDefs, resolvers }) });
