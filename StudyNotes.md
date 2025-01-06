@@ -120,12 +120,17 @@ How would we move from a design where each user belongs to one team, to a design
 1. If downtime was not allowable for the creation of the join table, use some kind of script to populate the `UserTeams` table from the data in `Users` table, paying attention to the fact that new users could be added to the `Users` table as you go.
 
 Okay, and what if we've exposed the ability to mutate a user's team?
-1. The mutation resolver should set the `teamId` in the `Users` table to `null` and write a new record to `UserTeams`
-1. Filter out `null` from the merged responses
-1. Handle `null` correctly in the migration script
+~1. The mutation resolver should set the `teamId` in the `Users` table to `null` and write a new record to `UserTeams`.~ 
+~1. Filter out `null` from the merged responses~
+~1. Handle `null` correctly in the migration script~
+No, this won't work because the `team` field is non-nullable. Back to the drawing board! Could we make a third column on the `UserTeams` table to represent that a given `UserTeam` entry is original to the `Users` table? Does that help us at all? Then we could query that table for the `team` query using that column?
+
+Realistically, I think we would have to think about what it means for the data to be modified in this way. If a user can now be on multiple teams, what does the query to the singular team field represent? Is this even valid data once the relationship becomes many-to-many?
 
 ## Schema Changes
 ### Backwards compatibility
 ### Deprecation
+* Apollo documentation: https://www.apollographql.com/docs/graphos/schema-design/guides/deprecations
+* Use field usage metrics to determine when you can remove the field!
 
 ## Authentication and Authorization
