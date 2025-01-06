@@ -35,7 +35,8 @@ type User
   countryCode: String! @join__field(graph: USERS)
   id: ID! @join__field(graph: USERS)
   name: String! @join__field(graph: USERS)
-  team: Team! @join__field(graph: USERS)
+  team: Team! @deprecated(reason: "Use `teams` instead.") @join__field(graph: USERS)
+  teams: [Team!]! @join__field(graph: USERS)
   timezone: String! @join__field(graph: USERS)
 }
 

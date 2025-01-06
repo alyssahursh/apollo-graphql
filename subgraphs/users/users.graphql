@@ -21,7 +21,8 @@ type User @key(fields: "id") {
 	country: String!
 	countryCode: String!
 	timezone: String!
-	team: Team!
+	team: Team! @deprecated(reason: "Use `teams` instead.")
+	teams: [Team!]!
 }
 
 type Team {

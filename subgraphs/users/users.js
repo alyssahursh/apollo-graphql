@@ -48,10 +48,12 @@ const resolvers = {
               const teamRequested = info.fieldNodes.some((field) => 
                 field.selectionSet.selections.some((sel) => sel.name.value === 'team')
               );
-              if (!teamRequested) {
+              const teamsRequested = info.fieldNodes.some((field) => 
+                field.selectionSet.selections.some((sel) => sel.name.value === 'teams')
+              );
+              if (!teamRequested && !teamsRequested) {
                 resolve(userRow);
               }
-
               db.get('SELECT * FROM Teams WHERE id = ?', [userRow.teamId], (err, teamRow) => {
                 if (err) {
                   reject(err);
@@ -60,7 +62,8 @@ const resolvers = {
                 } else {
                   resolve({
                     ...userRow,
-                    team: teamRow
+                    team: teamRow,
+                    teams: [teamRow]
                   });
                 }
               });
