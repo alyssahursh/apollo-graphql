@@ -2,7 +2,7 @@
 # https://www.apollographql.com/blog/using-nullability-in-graphql
 extend type Query {
 	hello: String!
-	me: User!
+	me(id: ID!): User!
 	teams(limit: Int, after: ID): [Team]
 }
 

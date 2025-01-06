@@ -36,10 +36,10 @@ const resolvers = {
         });
       },
       me: (parent, args, contextValue, info) => {
+        console.log(args);
         return new Promise((resolve, reject) => {
-          const randomUserId = Math.floor(Math.random() * 100) + 1;
-          console.log(`Attempting to select data for user ID ${randomUserId} from database`);
-          db.get('SELECT * FROM Users WHERE id = ?', [randomUserId], (err, userRow) => {
+          console.log(`Attempting to select data for user ID ${args.id} from database`);
+          db.get('SELECT * FROM Users WHERE id = ?', [args.id], (err, userRow) => {
             if (err) {
               reject(err);
             } else if (!userRow) {
