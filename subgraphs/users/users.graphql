@@ -1,8 +1,9 @@
 # Ideally, teams would be a non-nullable list of non-null Teams: [Team!]!
 # https://www.apollographql.com/blog/using-nullability-in-graphql
+# `me` query should require authentication with `@authenticated`
 extend type Query {
 	hello: String!
-	me(id: ID!): User!
+	me: User!
 	teams(limit: Int, after: ID): [Team]
 }
 

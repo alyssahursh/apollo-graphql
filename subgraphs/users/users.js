@@ -35,11 +35,12 @@ const resolvers = {
           })
         });
       },
-      me: (_, args) => {
-        console.log(`User query args: ${JSON.stringify(args)}`);
+      me: (_, args, context) => {
+        console.log(`User query args: ${JSON.stringify(args)}, context: ${JSON.stringify(context)}`);
+        const userId = context.userId;
         return new Promise((resolve, reject) => {
-          console.log(`Attempting to select data for userId: ${args.id} from user table`);
-          db.get('SELECT * FROM Users WHERE id = ?', [args.id], (err, userRow) => {
+          console.log(`Attempting to select data for userId: ${userId} from user table`);
+          db.get('SELECT * FROM Users WHERE id = ?', [userId], (err, userRow) => {
             if (err) {
               reject(err);
             } else if (!userRow) {
@@ -107,7 +108,20 @@ const resolvers = {
       }
     }
 }
-const server = new ApolloServer({ schema: buildSubgraphSchema({ typeDefs, resolvers }) });
+const server = new ApolloServer({ 
+  schema: buildSubgraphSchema({ typeDefs, resolvers }),
+  context: ({ req }) => {
+    console.log(`Subschema request headers: ${JSON.stringify(req.headers)}`);
+    const authHeader = req.headers['authorization'];
+    console.log(`Auth header received in subgraph: ${authHeader}`);
+
+    if (!authHeader) {
+      throw new Error('Unauthorized');
+    }
+
+    return { userId: authHeader.split(' ')[1] }; // Don't do this! This allows any user to send any userId in their headers.
+  }
+});
 server.listen( {port: port} ).then(({ url }) => {
   console.log(`🚀 Users subgraph ready at ${url}`);
 }).catch(err => {console.error(err)});

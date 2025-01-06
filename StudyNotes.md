@@ -134,3 +134,6 @@ Realistically, I think we would have to think about what it means for the data t
 * Use field usage metrics to determine when you can remove the field!
 
 ## Authentication and Authorization
+* Apollo client authentication docs: https://www.apollographql.com/docs/react/networking/authentication
+* Custom auth directives: https://www.apollographql.com/docs/apollo-server/security/authentication
+* https://www.apollographql.com/blog/directive-based-authorization-for-financial-services

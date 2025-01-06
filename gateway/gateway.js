@@ -15,7 +15,7 @@ if (process.env.APOLLO_OTEL_EXPORTER_TYPE) {
 
 // Main
 const { ApolloServer } = require('apollo-server');
-const { ApolloGateway } = require('@apollo/gateway');
+const { ApolloGateway, RemoteGraphQLDataSource } = require('@apollo/gateway');
 const { readFileSync } = require('fs');
 
 const port = process.env.APOLLO_PORT || 4000;
@@ -32,13 +32,32 @@ if (embeddedSchema){
   console.log('Starting Apollo Gateway in managed mode ...');
 }
 
-const gateway = new ApolloGateway(config);
+const gateway = new ApolloGateway({
+  ...config,
+  buildService({ url }) {
+    return new RemoteGraphQLDataSource({
+      url,
+      willSendRequest({ request, context }) {
+        // Forward the Authorization header if it exists
+        if (context.authorization) {
+          request.http.headers.set('Authorization', context.authorization);
+        }
+      }
+    });
+  }
+});
 
 const server = new ApolloServer({
   gateway,
   debug: true,
   // Subscriptions are unsupported but planned for a future Gateway version.
-  subscriptions: false
+  subscriptions: false,
+  context: ({ req }) => {
+    const authorization = req.headers['authorization'];
+    console.log(`Auth header received in gateway: ${authorization}`);
+    
+    return { authorization }; // Pass auth information to subgraphs
+  }
 });
 
 server.listen( {port: port} ).then(({ url }) => {
