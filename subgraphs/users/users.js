@@ -71,16 +71,38 @@ const resolvers = {
       teams: (parent) => {
         console.log(`Teams field query parent: ${JSON.stringify(parent)}`);
         return new Promise((resolve, reject) => {
-          db.get('SELECT * FROM Teams WHERE id = ?', [parent.teamId], (err, team) => {
-            if (err) {
-              reject(err);
-            } else if (!team) {
-              reject(new Error(`No team found in teams table for teamId: ${parent.teamId}`));
-            } else {
-              console.log(`Retrieved team: ${JSON.stringify(team)} from team table`);
-              resolve([team]);
-            }
-          });
+          const teamPromise = new Promise((resolve, reject) => {
+            db.get('SELECT * FROM Teams WHERE id = ?', [parent.teamId], (err, team) => {
+              if (err) {
+                reject(err);
+              } else {
+                console.log(`Retrieved team: ${JSON.stringify(team)} from team table`);
+                resolve(team);
+              }
+            });
+          })
+          const teamsPromise = new Promise((resolve, reject) => {
+            db.all('SELECT DISTINCT t.id, t.name FROM Teams as t RIGHT JOIN UserTeams as u ON t.id = u.teamId WHERE u.userId = ?', [parent.id], (err, teams) => {
+              if (err) {
+                reject(err);
+              } else {
+                console.log(`Retrieved teams: ${JSON.stringify(teams)} from userteams table`);
+                resolve(teams);
+              }
+            });
+          })
+
+          resolve(Promise.all([teamPromise, teamsPromise])
+            .then(([teamPromise, teamsPromise]) => {
+              return Array.from(
+                new Map([teamPromise, ...teamsPromise]
+                  .filter((team => team !== null))
+                  .map(team => [team.id, team]))
+                  .values()
+              );
+            })
+            .catch((err) => { throw new Error['Error retrieving teams'] })
+          );
         })
       }
     }
