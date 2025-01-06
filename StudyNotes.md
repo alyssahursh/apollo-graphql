@@ -102,7 +102,27 @@
 
 ## Database Design
 ### One-to-many vs many-to-many
+* Existing Teams table is one-to-many with Users table (presumably)
+* What if a user could be part of many teams? We would need to create a many-to-many relationship.
+* Many-to-many relationships require a join table that references the primary keys of each table
 ### Database migration and zero-downtime solutions
+How would we move from a design where each user belongs to one team, to a design where users can be part of multiple teams? The challenges here depend on whether we've exposed the ability to mutate the user's team before undertaking this migration, so for now let's assume that we've only exposed read capability. Here are some thoughts:
+1. Create a new field `teams: [Team!]!` on the `user` entity
+1. Create a new join table for UserTeams. If minimal downtime is allowable, we could do this by pulling the data from the `Users` table, like this:
+    ```
+    INSERT INTO UserTeams (userId, teamId)
+    SELECT id, teamId FROM Users;
+    ```
+1. Create a new resolver for `teams`
+    1. If downtime was allowable, read only from `UserTeams`
+    1. Otherwise, read from both the `Users` table and the `UserTeams` table and return the merge results
+1. Mark the original `team` field `@deprecated`: https://www.apollographql.com/docs/graphos/schema-design/guides/deprecations
+1. If downtime was not allowable for the creation of the join table, use some kind of script to populate the `UserTeams` table from the data in `Users` table, paying attention to the fact that new users could be added to the `Users` table as you go.
+
+Okay, and what if we've exposed the ability to mutate a user's team?
+1. The mutation resolver should set the `teamId` in the `Users` table to `null` and write a new record to `UserTeams`
+1. Filter out `null` from the merged responses
+1. Handle `null` correctly in the migration script
 
 ## Schema Changes
 ### Backwards compatibility
